@@ -18,7 +18,9 @@ const LandingPageForm = ({ onClose, onUpdate }) => {
       linkedin: '',
       whatsapp: '',
       xTwitter: ''
-    }
+    },
+    logo: null,
+    landscapePicture: null,
   });
 
   useEffect(() => {
@@ -51,10 +53,35 @@ const LandingPageForm = ({ onClose, onUpdate }) => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0]
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formDataToSend = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      if (key === 'socialLinks') {
+        Object.keys(formData.socialLinks).forEach((socialKey) => {
+          formDataToSend.append(`socialLinks[${socialKey}]`, formData.socialLinks[socialKey]);
+        });
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+    console.log(formDataToSend)
+    console.log(formData)
     try {
-      const response = await axios.post('/api/saveData', formData);
+      const response = await axios.post('http://localhost:5000/api/saveLandingPageData', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       if (response.status === 200) {
         onUpdate(response.data); // Update the parent component with the new data
         onClose(); // Close the modal
@@ -142,6 +169,30 @@ const LandingPageForm = ({ onClose, onUpdate }) => {
                   />
                 </div>
               ))}
+              <div className="mb-4">
+                <label className="form-label" htmlFor="logo">
+                  Logo
+                </label>
+                <input
+                  type="file"
+                  name="logo"
+                  onChange={handleFileChange}
+                  className="form-control custom-placeholder"
+                  id="logo"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="form-label" htmlFor="landscapePicture">
+                  Landscape Picture
+                </label>
+                <input
+                  type="file"
+                  name="landscapePicture"
+                  onChange={handleFileChange}
+                  className="form-control custom-placeholder"
+                  id="landscapePicture"
+                />
+              </div>
             </div>
             <div className="modal-footer">
               <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded" onClick={onClose}>

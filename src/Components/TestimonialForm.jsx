@@ -1,3 +1,130 @@
+// import React, { useState } from 'react';
+// import axios from 'axios';
+
+// const TestimonialForm = ({ onClose, onUpdate }) => {
+//   const [formData, setFormData] = useState({
+//     title: '',
+//     content: '',
+//     image: null,
+//   });
+//   const [file, setFile] = useState(null);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({
+//       ...formData,
+//       [name]: value,
+//     });
+//   };
+
+//   const handleFileChange = (e) => {
+//     setFormData({
+//       ...formData,
+//       image: e.target.files[0],
+//     });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+    
+//     // Validate the description
+//     const descriptionError = validateDescription(formData.description);
+//     if (descriptionError) {
+//       setErrors({ description: descriptionError });
+//       return;
+//     } else {
+//       setErrors({ description: '' });
+//     }
+
+//     const formDataObj = new FormData();
+//     formDataObj.append('title', formData.title);
+//     if (formData.image) {
+//       formDataObj.append('image', formData.image);
+//     }
+
+//     try {
+//       const response = await axios.post('http://localhost:5000/api/products', formDataObj, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+//       if (response.status === 200) {
+//         onUpdate(response.data); // Update the parent component with the new data
+//         onClose(); // Close the modal
+//       }
+//     } catch (error) {
+//       console.error("Error submitting form:", error);
+//     }
+//   };
+
+//   return (
+//     <div className="modal fade show" role="dialog" style={{ display: "block", paddingRight: "17px" }}>
+//       <div className="modal-dialog modal-lg">
+//         <div className="modal-content">
+//           <div className="modal-header">
+//             <h5 className="modal-title">Add New Testimonial</h5>
+//             <button type="button" className="close" onClick={onClose}>
+//               <span>&times;</span>
+//             </button>
+//           </div>
+//           <form onSubmit={handleSubmit}>
+//             <div className="modal-body">
+//               <div className="mb-4">
+//                 <label className="form-label" htmlFor="title">
+//                   Title
+//                 </label>
+//                 <input
+//                   type="text"
+//                   name="title"
+//                   value={formData.title}
+//                   onChange={handleChange}
+//                   className="form-control custom-placeholder"
+//                   id="title"
+//                 />
+//               </div>
+//               <div className="mb-4">
+//                 <label className="form-label" htmlFor="image">
+//                   Upload Image
+//                 </label>
+//                 <input
+//                   type="file"
+//                   name="image"
+//                   onChange={handleFileChange}
+//                   className="form-control custom-placeholder"
+//                   id="image"
+//                 />
+//               </div>
+//               <div className="mb-4">
+//                 <label className="form-label" htmlFor="content">
+//                   Content
+//                 </label>
+//                 <textarea
+//                   name="content"
+//                   value={formData.content}
+//                   onChange={handleChange}
+//                   className="form-control custom-placeholder"
+//                   id="content"
+//                 />
+//               </div>
+//             </div>
+//             <div className="modal-footer">
+//               <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded" onClick={onClose}>
+//                 Close
+//               </button>
+//               <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+//                 Submit
+//               </button>
+//             </div>
+//           </form>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TestimonialForm;
+
+
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -5,8 +132,9 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
+    image: null,
   });
-  const [file, setFile] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,31 +145,52 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
   };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFormData({
+      ...formData,
+      image: e.target.files[0],
+    });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.title.trim()) {
+      errors.title = 'Title is required';
+    }
+    if (!formData.content.trim()) {
+      errors.content = 'Content is required';
+    }
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      let imageUrl = '';
-      if (file) {
-        const uploadData = new FormData();
-        uploadData.append('file', file);
-        const uploadResponse = await axios.post('/api/upload', uploadData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        imageUrl = uploadResponse.data.url;
-      }
 
-      const response = await axios.post('/api/testimonials', { ...formData, imageUrl });
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const formDataObj = new FormData();
+    formDataObj.append('title', formData.title);
+    formDataObj.append('content', formData.content);
+    if (formData.image) {
+      formDataObj.append('image', formData.image);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/testimonials', formDataObj, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (response.status === 200) {
         onUpdate(response.data); // Update the parent component with the new data
         onClose(); // Close the modal
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      setErrors({ submit: 'Failed to submit. Please try again later.' });
     }
   };
 
@@ -57,6 +206,7 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
+              {errors.submit && <div className="alert alert-danger">{errors.submit}</div>}
               <div className="mb-4">
                 <label className="form-label" htmlFor="title">
                   Title
@@ -69,6 +219,7 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
                   className="form-control custom-placeholder"
                   id="title"
                 />
+                {errors.title && <div className="text-danger">{errors.title}</div>}
               </div>
               <div className="mb-4">
                 <label className="form-label" htmlFor="image">
@@ -92,14 +243,23 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
                   onChange={handleChange}
                   className="form-control custom-placeholder"
                   id="content"
+                  rows="4"
                 />
+                {errors.content && <div className="text-danger">{errors.content}</div>}
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded" onClick={onClose}>
+              <button
+                type="button"
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={onClose}
+              >
                 Close
               </button>
-              <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
                 Submit
               </button>
             </div>
@@ -111,3 +271,4 @@ const TestimonialForm = ({ onClose, onUpdate }) => {
 };
 
 export default TestimonialForm;
+

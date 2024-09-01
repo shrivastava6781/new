@@ -6,7 +6,7 @@ import { IoLocation } from "react-icons/io5";
 
 const Contact = () => {
   return (
-    <div className='max-w-100   md:bg-slate-50 grid sm:grid-rows-1 md:grid-rows-2 md:grid-flow-col md:m-2 gap-2 m-3'>
+    <div className='max-w-100 grid sm:grid-rows-1 md:grid-rows-2 md:grid-flow-col md:m-2 gap-2 m-3'>
       <div className='bg-[#e4abc5] m-1 py-2 rounded-full flex flex-col items-center justify-center gap-1'>
         <div><SiGooglemessages  className=" w-9 h-9" /></div>
         <div className='font-medium'>customerservice@unogreen.in</div>

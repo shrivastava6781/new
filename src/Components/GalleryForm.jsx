@@ -17,7 +17,7 @@ const GalleryForm = ({ onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/gallery', formData);
+      const response = await axios.post('http://localhost:5000/api/gallery', formData);
       if (response.status === 200) {
         onUpdate(response.data); // Update the parent component with the new data
         onClose(); // Close the modal

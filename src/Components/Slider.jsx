@@ -1,13 +1,13 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade } from 'swiper/modules';
+import landscape from "../image/landscape.png"
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 
 const images = [
-  "https://images.unsplash.com/photo-1579547621869-0ddb5f237392?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1653389527532-884074ac1c65?q=80&w=2062&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    landscape,
 ];
 
 const Slider = () => {

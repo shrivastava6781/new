@@ -10,6 +10,7 @@ import ServiceForm from './ServiceForm';
 import ProductForm from './ProductForm';
 import PaymentForm from './PaymentForm';
 import AppointmentForm from './AppointmentForm';
+import AddContact from './AddContacts';
 
 const AllForms = ({ showModal, setShowModal }) => {
     const [isLandingPageModalOpen, setLandingPageModalOpen] = useState(false);
@@ -20,6 +21,7 @@ const AllForms = ({ showModal, setShowModal }) => {
     const [isProductFormModalOpen, setProductFormModalOpen] = useState(false);
     const [isPaymentFormModalOpen, setPaymentFormModalOpen] = useState(false);
     const [isAppointmentFormModalOpen, setAppointmentFormModalOpen] = useState(false);
+    const [isContactFormModalOpen, setContactFormModalOpen] = useState(false);
 
     const [formData, setFormData] = useState(null);
 
@@ -55,6 +57,11 @@ const AllForms = ({ showModal, setShowModal }) => {
         setAppointmentFormModalOpen(true);
     };
 
+    // Add Contact  
+    const handleAddContactForm = () => {
+        setContactFormModalOpen(true);
+    };
+    
     const handleClose = () => {
         setLandingPageModalOpen(false);
         setBlogFormModalOpen(false);
@@ -64,6 +71,7 @@ const AllForms = ({ showModal, setShowModal }) => {
         setProductFormModalOpen(false);
         setPaymentFormModalOpen(false);
         setAppointmentFormModalOpen(false);
+        setContactFormModalOpen(false);
     };
 
     const handleUpdate = (data) => {
@@ -150,14 +158,14 @@ const AllForms = ({ showModal, setShowModal }) => {
                                 <MdArrowForwardIos />
                             </div>
                         </div>
-                        {/* <div className="flex cursor-pointer align-items-center justify-between p-2" onClick={handleAddAppointmentForm}>
+                        <div className="flex cursor-pointer align-items-center justify-between p-2" onClick={handleAddContactForm}>
                             <div className='flex align-items-center justify-center gap-2'>
-                                <h6 className='pt-2'>Our Appointment</h6>
+                                <h6 className='pt-2'>Our Contact</h6>
                             </div>
                             <div>
                                 <MdArrowForwardIos />
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             </Modal.Body>
@@ -205,6 +213,12 @@ const AllForms = ({ showModal, setShowModal }) => {
             )}
             {isAppointmentFormModalOpen && (
                 <AppointmentForm
+                    onClose={handleClose}
+                    onUpdate={handleUpdate}
+                />
+            )}
+            {isContactFormModalOpen && (
+                <AddContact
                     onClose={handleClose}
                     onUpdate={handleUpdate}
                 />

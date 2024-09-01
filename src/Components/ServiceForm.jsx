@@ -7,9 +7,14 @@ const ServiceForm = ({ onClose, onUpdate }) => {
     description: '',
     image: null,
   });
+  const [wordCount, setWordCount] = useState(0);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'description') {
+      const wordCount = value.trim().split(/\s+/).length;
+      setWordCount(wordCount);
+    }
     setFormData({
       ...formData,
       [name]: value,
@@ -25,6 +30,10 @@ const ServiceForm = ({ onClose, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (wordCount > 35) {
+      alert('Description should not exceed 35 words.');
+      return;
+    }
     const formDataObj = new FormData();
     formDataObj.append('title', formData.title);
     formDataObj.append('description', formData.description);
@@ -33,7 +42,7 @@ const ServiceForm = ({ onClose, onUpdate }) => {
     }
 
     try {
-      const response = await axios.post('/api/services', formDataObj, {
+      const response = await axios.post('http://localhost:5000/api/services', formDataObj, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -83,6 +92,13 @@ const ServiceForm = ({ onClose, onUpdate }) => {
                   className="form-control custom-placeholder"
                   id="description"
                 />
+                <small className="form-text text-muted">
+                  {wordCount > 35 ? (
+                    <span className="text-danger">Description should not exceed 35 words.</span>
+                  ) : (
+                    <span>Minimum {35 - wordCount} words .</span>
+                  )}
+                </small>
               </div>
               <div className="mb-4">
                 <label className="form-label" htmlFor="image">
